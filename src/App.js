@@ -1,16 +1,19 @@
 import './App.css';
 import Header from './component/Header';
 import Sidebar from './component/Sidebar';
+import Button from './component/Buttonlist';
 import store from "./utils/store";
 import { Provider } from "react-redux";
+import ButtonList from './component/Buttonlist';
 
 function App() {
   return (
     <Provider store={store}>
-      <div>
         <Header />
-        <Sidebar />
-      </div>
+        <div className="flex">
+          <Sidebar />
+          <ButtonList />
+        </div>
     </Provider>
   );
 }
