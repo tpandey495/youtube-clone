@@ -1,12 +1,17 @@
-import logo from './logo.svg';
 import './App.css';
 import Header from './component/Header';
+import Sidebar from './component/Sidebar';
+import store from "./utils/store";
+import { Provider } from "react-redux";
 
 function App() {
   return (
-    <div className="App">
-      <Header />
-    </div>
+    <Provider store={store}>
+      <div>
+        <Header />
+        <Sidebar />
+      </div>
+    </Provider>
   );
 }
 
