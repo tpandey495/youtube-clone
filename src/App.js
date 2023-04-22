@@ -1,20 +1,37 @@
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './App.css';
 import Header from './component/Header';
-import Sidebar from './component/Sidebar';
-import Button from './component/Buttonlist';
 import store from "./utils/store";
 import { Provider } from "react-redux";
-import ButtonList from './component/Buttonlist';
+import Home from './pages/Home';
+import MainContainer from './component/MainContainer';
+import Watch from './pages/Watchpage';
+
+
+const appRouter = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />,
+    children:[
+      {
+      path:"/",
+      element:<MainContainer/>,
+      },
+     {
+      path:"/watch",
+      element:<Watch/>,
+     }
+    ]
+  },
+]);
 
 function App() {
   return (
     <Provider store={store}>
         <Header />
-        <div className="flex">
-          <Sidebar />
-          <ButtonList />
-        </div>
+        <RouterProvider router={appRouter} />
     </Provider>
+
   );
 }
 
