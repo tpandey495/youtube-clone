@@ -7,7 +7,6 @@ import ButtonList from '../Buttonlist';
     <div>
         <ButtonList/>
         <VideoContainer/>
-      
     </div>
   )
 }

@@ -1,9 +1,48 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { useDispatch } from "react-redux";
 import { toggleMenu } from "../../utils/appSlice";
+import { search_api } from "../../utils/constant";
+import { useSelector } from "react-redux";
+import { chacheResults } from "../../utils/searchSlice";
 
 const Head = () => {
+  const[searchquery,setSearchquery]=useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchCache = useSelector((store) => store.search);
   const dispatch = useDispatch();
+  
+
+    //Making api call for every key stroke
+    //If diffrence between two api call is less than 200sec
+    //Decline api call
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        if (searchCache[searchquery]) {
+          setSuggestions(searchCache[searchquery]);
+        } else {
+          getSearchSuggestions();
+        }
+      }, 200)
+      return () => {
+        clearTimeout(timer);
+      };
+    }, [searchquery]);
+ 
+    const getSearchSuggestions=async()=>{
+       const data=await fetch(search_api+searchquery);
+       const json=await data.json();
+       setSuggestions(json[1]);
+        // update cache
+       dispatch(
+        chacheResults({
+          [searchquery]: json[1],
+        })
+      );
+    };
+  
+
+
 
   const toggleMenuHandler = () => {
     dispatch(toggleMenu());
@@ -27,13 +66,30 @@ const Head = () => {
         </a>
       </div>
       <div className="col-span-10 px-10">
-        <input
-          className="w-1/2 border border-gray-400 p-2 rounded-l-full"
-          type="text"
-        />
-        <button className="border border-gray-400 px-5 py-2 rounded-r-full bg-gray-100">
-          🔍
-        </button>
+        <div>
+          <input
+            className="px-5 w-1/2 border border-gray-400 p-2 rounded-l-full"
+            type="text"
+            value={searchquery}
+            onChange={(e) => setSearchquery(e.target.value)}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setShowSuggestions(false)}
+          />
+          <button className="border border-gray-400 px-5 py-2 rounded-r-full bg-gray-100">
+            🔍
+          </button>
+        </div>
+        {showSuggestions && (
+          <div className="fixed bg-white py-2 px-2 w-[37rem]  shadow-lg rounded-lg border border-gray-100">
+            <ul>
+              {suggestions.map((s) => (
+                <li key={s} className="py-2 px-3 shadow-sm hover:bg-gray-100">
+                  🔍 {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       <div className="col-span-1">
         <img
@@ -47,3 +103,4 @@ const Head = () => {
 };
 
 export default Head;
+
